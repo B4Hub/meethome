@@ -74,7 +74,7 @@ app.get('/signin', (req, res) => {
 
 app.get('/signup', (req, res) => {
   isUserLoggedIn(req, res, () => {
-      res.redirect('/home');
+      res.redirect('/');
   },()=>{
       res.render('signup.ejs');
   });
@@ -95,7 +95,7 @@ app.post('/signin', (req, res) => {
                     };
                     const token = jwt.sign(userdata, config.JWT_SECRET);
                     res.cookie('auth', token);
-                    res.redirect('/home');
+                    res.redirect('/');
                 } else {
                     res.send('Wrong password');
                 }
@@ -125,7 +125,7 @@ app.post('/signup', async (req, res) => {
                     };
                     const token = jwt.sign(userdata, config.JWT_SECRET);
                     res.cookie('auth', token);
-                    res.redirect('/home');
+                    res.redirect('/');
                 });
             }
         });
