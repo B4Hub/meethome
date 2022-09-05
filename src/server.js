@@ -213,7 +213,7 @@ app.get('/newmeet', (req, res) => {
       });
   },
   ()=>{
-      res.redirect('/');
+      res.redirect('/signin');
   })
 });
 
@@ -266,7 +266,7 @@ app.get('/:roomid', (req, res) => {
       });
     },
     ()=>{
-        res.redirect('/');
+        res.redirect('/signin');
     });
 });
 
@@ -289,7 +289,7 @@ app.post('/:roomid', (req, res) => {
       });
     },
     ()=>{
-        res.redirect('/');
+        res.redirect('/signin');
     });
 });
 
