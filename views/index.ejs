@@ -201,8 +201,8 @@
         </div>
         <hr data-content="OR" class="hr-text">
         <div class="custom-search">
-            <input type="text" class="custom-search-input form-control" placeholder="Enter room code">
-            <button class="custom-search-botton px-3 btn btn-primary" type="submit">Join</button>  
+            <input type="text" class="custom-search-input form-control" id="roomcode" placeholder="Enter room code">
+            <button class="custom-search-botton px-3 btn btn-primary" onclick="joinroom()" >Join</button>  
         </div>
     </div>
     </header>
@@ -212,7 +212,12 @@
 
 
     <script>
-    startApp();
+        
+        function joinroom(){
+            var roomcode = document.getElementById("roomcode").value;
+            window.location.href = "/joinroom?roomcode="+roomcode;
+        }
+
     </script>
 
     
