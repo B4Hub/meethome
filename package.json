@@ -4,7 +4,7 @@
   "description": "video chat app",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon src/server"
+    "start": "node src/server"
   },
   "repository": {
     "type": "git",
