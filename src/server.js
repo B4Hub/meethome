@@ -232,6 +232,21 @@ app.get('/callended', (req, res) => {
       res.redirect('/signin');
   })
 })
+app.get('/callended/:roomid', (req, res) => {
+  isUserLoggedIn(req, res, () => {
+    let loggedin=false;
+    jwt.verify(req.cookies.auth, config.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            res.redirect('/signin');
+        } else {
+          res.render('endcall.ejs', {roomid: req.params.roomid, loggedin:true, name: decoded.name, email: decoded.email, picture: decoded.picture, userid: decoded.userid });
+        }
+    });
+  },
+  ()=>{
+      res.redirect('/signin');
+  })
+})
 
 
 app.get('/:roomid', (req, res) => {
