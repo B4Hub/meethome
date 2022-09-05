@@ -14,8 +14,7 @@ A video chat web app implementation using WebRTC, Socket.io and Node.js. This de
 - Toggling of audio stream (mute & unmute)
 - Mute individual participant
 - Full Screen
-- Screen Recording
-- Video Recording
+
 
  
 # Demo
