@@ -252,6 +252,11 @@ const socket = io();
     });
 
 
+    stopButton.addEventListener('click', () => {
+        
+        window.location.href = '/callended';
+    });
+
     socket.on('userjoined', (data) => {
 
         const peer = new RTCPeerConnection();
