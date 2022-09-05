@@ -2,7 +2,7 @@
   "name": "meethome",
   "version": "0.0.1",
   "description": "video chat app",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "start": "node src/server"
   },
