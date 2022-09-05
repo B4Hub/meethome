@@ -261,7 +261,7 @@ app.get('/:roomid', (req, res) => {
             
             
           } else {
-            res.render('room.ejs', { roomid: req.params.roomid,name:decoded.name, picture: decoded.picture , userid: decoded.userid });
+            res.render('joinroom.ejs', { roomid: req.params.roomid,name:decoded.name, picture: decoded.picture , userid: decoded.userid });
           }
       });
     },
