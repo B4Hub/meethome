@@ -27,6 +27,6 @@ You can test at [https://meethome.herokuapp.com/](https://meethome.herokuapp.com
 
 # Contributions
 - [Ravi Babu](https://github.com/ravibabuvadde)
-- [Usman Basha]()
+- [Usman Basha](https://github.com/orgs/B4Hub/people/usmanbasha07)
 - [Baba Hussain](https://github.com/bhsk85)
 - [Bharani](https://github.com/bharanispace)
