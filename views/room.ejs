@@ -254,7 +254,7 @@ const socket = io();
 
     stopButton.addEventListener('click', () => {
         
-        window.location.href = '/callended/:<%= roomid %>';
+        window.location.href = '/callended/<%= roomid %>';
     });
 
     socket.on('userjoined', (data) => {
