@@ -1,0 +1,179 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css'>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api:client.js"></script>
+<script>
+  let googleUser = {};
+  let startApp = ()=>{
+    gapi.load('auth2', ()=>{
+      auth2 = gapi.auth2.init({
+        client_id: '985697523517-dkp2f6qrf6bo51mi8416mj3e41jcvpm9.apps.googleusercontent.com',
+        cookiepolicy: 'single_host_origin',
+
+      })
+      attachSignIn(document.getElementById('loginWithGoogle'));
+    })
+  }
+
+  const attachSignIn = (element)=>{
+    console.log(element.id);
+    auth2.attachClickHandler(element,{},
+      (googleUser)=>{
+        document.getElementById('name').innerText = 'Signed in: '+ googleUser.getBasicProfile().getName();
+      },(err)=>{
+        alert(JSON.stringify(err,undefined,2));
+      })
+  }
+
+
+
+</script>
+<header>
+
+<style>
+  .customGPlusSignIn {
+padding: 5px;
+display:block;
+text-align:center;
+position: absolute;
+top: 10px;
+right: 10px;
+}
+.logo{
+  color: blue;
+}
+.sign{
+  /* display: inline-block; */
+  padding-top:150px;
+}
+
+.nav {
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+}
+.bt{
+  float:right;
+  margin-right:10px;
+  margin-top:10px;
+}
+.custom-search {
+  position: relative;
+  width: 300px;
+  margin-top:10px;
+  margin-right:10px;
+  float:right;
+}
+.custom-search-input {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 100px;
+  padding: 10px 100px 10px 20px; 
+  line-height: 1;
+  box-sizing: border-box;
+  outline: none;
+}
+.custom-search-botton {
+  position: absolute;
+  right: 3px; 
+  top: 3px;
+  bottom: 3px;
+  border: 0;
+  background:blue;
+  color: #fff;
+  outline: none;
+  margin: 0;
+  padding: 0 10px;
+  border-radius: 100px;
+  z-index: 2;
+}
+#text{
+  padding-left:50px;
+  margin-top: 100px;
+  float:left;
+  
+}
+.img{
+     border-top-left-radius: 30px;
+     border-bottom-left-radius:30px ;
+     margin-top: 200px;
+   
+     height :400px;
+     width: 600px;
+    
+   }
+   .button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: blue;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: blue}
+
+.button:active {
+  background-color: blue;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+  <div id="g_id_onload"
+    data-client_id="985697523517-dkp2f6qrf6bo51mi8416mj3e41jcvpm9.apps.googleusercontent.com"
+    data-context="signin"
+    data-ux_mode="popup"
+    data-login_uri="google_auth"
+    data-nonce=""
+    data-auto_select="true"
+    data-itp_support="true">
+  </div>
+  <!-- Jumbotron -->
+  <div class="p-3 bg-light nav" >
+   <h2 class="logo" href="#">MeetHome</h2>
+   <!-- <a   href="#"><p class="font-weight-normal custom-search">Sign in</p></a> -->
+    <!-- <div id="loginWithGoogle">
+      <a class="btn btn-primary myButton" href="" role="button"><i class="bi bi-google"></i> Login with google </a>
+      
+    </div> -->
+    <div id="gSignInWrapper">
+      
+      <div id="loginWithGoogle" class="customGPlusSignIn  btn btn-primary">
+        <span class="icon bi bi-google"></span>
+        <span class="buttonText">Sign In with Google</span>
+      </div>
+    </div>
+    <div id="name"></div>
+  </div> 
+
+<div >
+  <a class="btn btn-primary bt" href="LoginView.html" role="button">Login</a>
+<div class="custom-search">
+  <input type="text" class="custom-search-input" placeholder="Enter room code">
+  <button class="custom-search-botton btn btn-primary" type="submit">Join</button>  
+</div>
+</div>
+<div id="text">
+  <h1>Connect with your loved ones.
+ </h1>
+ <div >
+ <h5 class="font-weight-normal">premium video meetings,now free for everyone. 
+ </h5>
+ <div class="sign" >
+  <p class="fs-3" > Let's start a new video chat</p>
+  <a href="#" class="button btn btn-primary " style="margin-left:50px">Host a meeting  <i class="bi bi-camera-video"></i></a>
+  <p class="fs-4"></p>
+ </div>
+</header>
+<div style="display:inline-block">
+  <img class="img" src="media/img2.png" alt="no img">
+  </div>
+
+
+  <script>
+    startApp();
+  </script>

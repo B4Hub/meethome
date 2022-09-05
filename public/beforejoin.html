@@ -1,0 +1,149 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css'>
+<header>
+<style>
+  .myButton {
+padding: 10px;
+display:block;
+text-align:center;
+position: absolute;
+top: 10px;
+right: 10px;
+}
+.logo{
+  color: blue;
+}
+
+.nav {
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+}
+.bt{
+  float:right;
+  margin-right:10px;
+}
+.custom-search {
+  position: relative;
+  width: 300px;
+  margin-top:10px;
+  margin-right:10px;
+  float:right;
+}
+.custom-search-input {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 100px;
+  padding: 10px 100px 10px 20px; 
+  line-height: 1;
+  box-sizing: border-box;
+  outline: none;
+}
+.custom-search-botton {
+  position: absolute;
+  right: 3px; 
+  top: 3px;
+  bottom: 3px;
+  border: 0;
+  background:blue;
+  color: #fff;
+  outline: none;
+  margin: 0;
+  padding: 0 10px;
+  border-radius: 100px;
+  z-index: 2;
+}
+#text{
+  padding-left:50px;
+  margin-top: 100px;
+  float:left;
+  
+}
+.img{
+     border-top-left-radius: 30px;
+     border-bottom-left-radius:30px ;
+     margin-top: 0px ;
+     margin-left:800px;
+     height :400px;
+     width: 600px;
+    
+   }
+</style>
+  
+  <!-- Jumbotron -->
+  <div class="p-3 bg-light nav" >
+   <h2 class="logo" href="#">MeetHome</h2>
+   <!-- <a   href="#"><p class="font-weight-normal custom-search">Sign in</p></a> -->
+    <a class="btn btn-primary myButton" href="" role="button">Login with google <i class="bi bi-google"></i></a>
+  </div> 
+
+
+ <div >
+  <div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <h5 class="card-header h5 text-center">
+                    B4SQUARE 
+                </h5>
+                <div class="card-body">
+                    <div class="booth">
+                        <video id="video" width="50%" 
+                            height="30%" autoplay>
+                        </video>
+                    </div>
+
+                    <div class="text-left">
+                        <!-- <a href="#!" class="btn btn-danger" 
+                            onClick="stop()">
+                            MUTE 
+                        </a> -->
+                        <button href="#!" class="btn btn-success"
+                            onClick="start()" ID="cams">
+                         CAM ON
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+     var stop = function () {
+         var stream = video.srcObject;
+         var tracks = stream.getTracks();
+         for (var i = 0; i < tracks.length; i++) {
+             var track = tracks[i];
+             track.stop();
+         }
+         video.srcObject = null;
+    }
+    var start = function () {
+        var ctrl = document.getElementById("cams").innerHTML
+        var video = document.getElementById('video'),
+            vendorUrl = window.URL || window.webkitURL;
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                    document.getElementById("cams").innerHTML="CAM OFF"
+                }).catch(function (error) {
+                    console.log("Something went wrong!");
+                });}
+        else{
+            stop()
+            document.getElementById("cams").innerHTML="CAM ON"
+        }    
+                
+
+        
+    }
+    // $(function () {
+    //     start();
+    // });  
+</script>
+
+
+
+
+  <!-- Jumbotron -->
+</header>

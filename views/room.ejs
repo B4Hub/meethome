@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On Meeting...</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+      
+    <style>
+        body{
+            position: inherit;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        
+        .meeting-controls{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;    
+        }
+        .rounded-circle{
+            border:1px solid;
+            border-radius:50%;
+            width: 40px;
+            aspect-ratio: 1/1;
+            border: none;
+        }
+
+        .videos{
+            position: relative; 
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            display: flex;
+            place-items: center;  
+            justify-content: center;  
+            align-items: center;
+            grid-template-columns: repeat(12, 1fr);
+            grid-gap: 100px;
+
+        }
+        
+        .container-fluid{
+            width: 100%;
+            height: 100vh;
+            margin:0 auto;
+        }
+
+        .videos video{
+            max-width: 300px;
+            object-fit: cover;
+            margin:0 auto;
+        }
+        .video{
+            height: fit-content;
+            width: fit-content; 
+            grid-column: 1/1;
+            position: relative;
+        }
+        .video video{
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #000;
+        }
+        .video label{
+            position: absolute;
+            bottom: 0;
+            left: 0%;
+            color: #fff;
+            padding: 5px;
+            font-weight: 600;
+        }
+
+        #remoteVideos .video{
+            min-width: 0;
+        }
+        
+
+      
+        
+    </style>
+</head>
+<body class="bg-dark">
+    <!-- <div class="camera">
+        <video id="localVideo" autoplay></video>
+        <video id="remoteVideo" autoplay></video>
+    </div>
+    <div id="remoteVideos">
+
+    </div>
+    <div class="controls">
+        <button id="toggleAudio">Mute</button>
+        <button id="stopButton">Stop</button>
+        <button id="toggleCamera">Stop Video</button>
+    </div>
+    <div class="ready">
+        <button id="readyButton">Ready</button>
+
+    </div> -->
+
+    <div class="container-fluid">
+        <div class="videos flex-wrap">
+            <div class="video bg-dark">
+                <video id="localVideo" autoplay></video>
+                <label for="localVideo"> You </label>
+            </div>
+            
+            <div id="remoteVideos" class="d-flex flex-wrap">
+                
+            </div>
+        </div>
+        <div class="meeting-controls">
+            <div class="row">
+                <div class="col-12">
+                    <div class="controls">
+                        <button id="toggleAudio" class="btn btn-dark rounded-circle" type="button"> <i class="fa-solid fa-microphone"></i> </button>
+                        <button id="stopButton" class="btn btn-danger rounded-circle"> <i class="fa-solid fa-phone-slash"></i> </button>
+                        <button id="toggleCamera" class="btn btn-dark rounded-circle"> <i class="fas fa-video"></i> </button>
+                        <button id="toggleFullScreen"  class="btn btn-dark rounded-circle"><i class="fa-solid fa-expand"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+
+
+const socket = io();
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+    const toggleAudio = document.getElementById('toggleAudio');
+    const toggleCamera = document.getElementById('toggleCamera');
+    const remoteVideos = document.getElementById('remoteVideos');
+    const toggleFullScreen = document.getElementById('toggleFullScreen');
+
+
+    
+
+    let peers = [];
+
+    const configuration = {
+        iceServers: [{
+            urls: 'stun:stun1.l.google.com:19302'
+        }]
+    };
+
+
+
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        socket.emit('saveuser',{
+            username: '<%= name %>',
+            userid: '<%= userid %>',
+            roomid: '<%= roomid %>',
+            picture: '<%= picture %>'
+        });
+
+        socket.emit('joinroom', {
+            roomid: '<%= roomid %>',
+            socketid: socket.id,
+            username: '<%= name %>',
+            picture: '<%= picture %>',
+            userid: '<%= userid %>'
+        });
+
+
+        
+    });
+
+    
+    
+  
+    let localStream;
+    let remoteStream;
+    let room;
+    let camera = true;
+    let mic = true;
+
+    navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true
+    }).then(stream => {
+        localStream = stream;
+        localVideo.srcObject = stream;
+        localVideo.muted = true;
+        localVideo.play();
+    }).catch(err => {
+        console.log(err);
+    });
+
+
+
+    socket.on('answer', (data) => {
+        peers[data.peerid].setRemoteDescription(JSON.parse(data.answer));
+        console.log('Answer received');
+
+    });
+
+
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+    });
+
+    toggleAudio.addEventListener('click', () => {
+        mic = !mic;
+        localStream.getAudioTracks()[0].enabled = mic;
+        if (mic) {
+            toggleAudio.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+        } else {
+            toggleAudio.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
+        }
+    });    
+
+    toggleFullScreen.addEventListener('click', () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+            toggleFullScreen.innerHTML = '<i class="fa-solid fa-expand"></i>';
+        } else {
+            document.documentElement.requestFullscreen();
+            toggleFullScreen.innerHTML = '<i class="fa-solid fa-compress"></i>';
+        }
+    });
+    
+
+    toggleCamera.addEventListener('click', () => {
+        camera = !camera;
+        localStream.getVideoTracks()[0].enabled = camera;
+        if (camera) {
+            toggleCamera.innerHTML = '<i class="fas fa-video"></i>';
+        } else {
+            toggleCamera.innerHTML = '<i class="fas fa-video-slash"></i>';
+        }
+    });
+
+
+    socket.on('userjoined', (data) => {
+
+        const peer = new RTCPeerConnection();
+        peer.peerid = "id" + Math.random().toString(16).slice(2);
+        peer.oniceconnectionstatechange = e => console.log(peer.iceConnectionState);
+        peer.peerChannel = peer.createDataChannel('chat');
+        
+        localStream.getTracks().forEach((track) => peer.addTrack(track, localStream));
+        peer.peerChannel.onopen = () => {
+            console.log('Channel Opened');
+            
+        };
+        peer.peerChannel.onmessage = (event) => {
+            console.log(event.data);
+        };
+        peer.peerChannel.onclose = () => {
+            console.log('Channel Closed');
+        };
+        peer.peerChannel.onerror = (err) => {
+            console.log(err);
+        };
+        peer.onicecandidate = (event) => {
+            if (event.candidate) {
+                socket.emit('candidate', {
+                    candidate: event.candidate,
+                    roomid: '<%= roomid %>',
+                    peerid: peer.peerid,
+                    username: '<%= name %>',
+                    socketid: data.socketid,
+                    picture: '<%= picture %>',
+                    userid: '<%= userid %>'
+                })
+            }
+        };
+        const remoteVideo = document.createElement('video');
+        const div = document.createElement('div');
+        const label = document.createElement('label');
+        label.innerHTML = data.username;
+        div.className = 'video bg-dark';
+        div.appendChild(remoteVideo);
+        div.appendChild(label);
+        remoteVideo.srcObject = null;
+        peer.ontrack = (event) => {
+            console.log('Track received');
+            
+            remoteVideo.srcObject = event.streams[0];
+        };
+        
+        remoteVideo.autoplay = true;
+        remoteVideo.playsinline = true;
+        remoteVideo.id = data.userid;
+        remoteVideo.className = 'remoteVideo';
+        remoteVideos.appendChild(div);
+        peer.createOffer().then((offer) => {
+            peer.setLocalDescription(offer);
+            socket.emit('offer', {
+                offer: JSON.stringify(offer),
+                peerid : peer.peerid,
+                socketid: data.socketid,
+                roomid: '<%= roomid %>',
+                username: '<%= name %>',
+                picture: '<%= picture %>',
+                userid: '<%= userid %>'
+            })
+        });
+
+
+        peers[peer.peerid] = peer;
+
+
+        
+    });
+
+    socket.on('offer',(data)=>{
+        const peer = new RTCPeerConnection();
+        peer.peerid = data.peerid;
+        peer.ondatachannel =  (event) => {
+            peer.peerChannel = event.channel;
+            peer.peerChannel.onopen = () => {
+                console.log('Channel Opened');
+                
+
+            };
+            peer.peerChannel.onmessage = (event) => {
+                console.log(event.data);
+            };
+            peer.peerChannel.onclose = () => {
+                console.log('Channel Closed');
+            };
+            peer.peerChannel.onerror = (err) => {
+                console.log(err);
+            };
+            console.log('Data Channel Created');
+        };
+
+        peer.onicecandidate = (event) => {
+            if (event.candidate) {
+                socket.emit('candidate', {
+                    candidate: event.candidate,
+                    socketid: data.socketid,
+                    roomid: '<%= roomid %>',
+                    peerid: peer.peerid,
+                })
+            }
+        };
+        
+        const remoteVideo = document.createElement('video');
+        const div = document.createElement('div');
+        const label = document.createElement('label');
+        label.innerHTML = data.username;
+        div.className = 'video bg-dark';
+        div.appendChild(remoteVideo);
+        div.appendChild(label);
+
+
+        remoteVideo.srcObject = null;
+        peer.ontrack = (event) => {
+            console.log('Track received');
+            remoteVideo.srcObject = event.streams[0];
+
+        };
+            remoteVideo.autoplay = true;
+            remoteVideo.playsinline = true;
+            remoteVideo.id = data.userid;
+            remoteVideo.className = 'remoteVideo';
+            remoteVideos.appendChild(div);
+
+        peer.setRemoteDescription(JSON.parse(data.offer));
+                navigator.mediaDevices.getUserMedia({
+                    audio: true,
+                    video: true
+                }).then(stream => {
+                    localStream = stream;
+                    localVideo.srcObject = null;
+                    localVideo.srcObject = stream;
+                    localVideo.muted = true;
+                    localVideo.play();
+                    
+                }).then(()=>{
+                    localStream.getTracks().forEach((track) => peer.addTrack(track, localStream));
+                    peer.createAnswer().then((answer) => {
+                    peer.setLocalDescription(answer);
+                    socket.emit('answer', {
+                        answer: JSON.stringify(answer),
+                        peerid : peer.peerid,
+                        socketid: data.socketid,
+                        roomid: '<%= roomid %>',
+                        username: '<%= name %>',
+                        picture: '<%= picture %>',
+                        userid: '<%= userid %>'
+                    })
+                })
+                }
+                    
+                    
+                )
+                
+                .catch(err => {
+                    console.log(err);
+                });
+        
+        peers[peer.peerid] = peer;
+    });
+    socket.on('candidate', (data) => {
+        peers[data.peerid].addIceCandidate(data.candidate);
+    });
+
+    socket.on('userleft', (data) => {
+        const remoteVideo = document.getElementById(data.userid);
+        remoteVideo.parentElement.remove();
+        console.log(data);
+    });
+
+</script>
+</html>
