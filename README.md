@@ -11,8 +11,7 @@ A video chat web app implementation using WebRTC, Socket.io and Node.js. This de
 # Features
 - Multi-participants
 - Toggling of video stream
-- Toggling of audio stream (mute & unmute)
-- Mute individual participant
+- Toggling of audio stream (mute & unmute}
 - Full Screen
 
 
